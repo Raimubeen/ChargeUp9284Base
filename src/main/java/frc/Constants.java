@@ -30,6 +30,8 @@ public final class Constants {
           * Percent output to run the arm up/down at
           */
         public static final double ARM_OUTPUT_POWER = 0.6;
+        public static final double AUTO_ARM_OUTPUT_POWER = 0.5;
+        public static final double ARM_HOLDSTALL_POWER = 0.1;
          /**
            * Time to extend or retract arm in auto
            */
@@ -67,12 +69,16 @@ public final class Constants {
         public static final String kConeAuto = "cone";
         public static final String kCubeAuto = "cube";
 
+
+
         public static final double AUTO_THROW_TIME_S = 0.375;
 
         /**
           * Time to drive back in auto
           */
-        public static final double AUTO_DRIVE_TIME = 6.0;
+        public static final double AUTO_DRIVE_TIME1 = 0.5;
+        public static final double AUTO_DRIVE_TIME2 = 0.5;
+        public static final double AUTO_DRIVE_TIME3 = 6.0;
 
         /**
           * Speed to drive backwards in auto

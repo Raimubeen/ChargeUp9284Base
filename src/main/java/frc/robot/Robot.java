@@ -1,7 +1,7 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
+//FRC9284 Version for 2023 ChargedUp game code from FRC118 EveryBot
 package frc.robot;
 
 
@@ -44,8 +44,8 @@ public class Robot extends TimedRobot {
    * motor controller classses (TalonFX, TalonSRX, Spark, VictorSP) to match your
    * robot.
    * 
-   * The arm is a NEO on Everybud.
-   * The intake is a NEO 550 on Everybud.
+   * The arm is a NEO on EveryBot.
+   * The intake is a NEO 550 on EveryBot.
    */
   CANSparkMax arm = new CANSparkMax(Constants.ArmConstants.CAN_ID_ARM, MotorType.kBrushless);
   CANSparkMax intake = new CANSparkMax(Constants.IntakeConstants.CAN_ID_INTAKE, MotorType.kBrushless);
@@ -201,36 +201,64 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    //code to be executed in Autonomous Mode
+    //this if statement does nothing and then returns to end the auto method
     if (m_autoSelected == Constants.AutoConstants.kNothingAuto) {
       setArmMotor(0.0);
       setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
       setDriveMotors(0.0, 0.0);
       return;
     }
-
+    //the timeElapsed variable keeps a running time during autonomous for timed sequences
     double timeElapsed = Timer.getFPGATimestamp() - autonomousStartTime;
 
-    if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S) {
-      setArmMotor(Constants.ArmConstants.ARM_OUTPUT_POWER);
-      setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
-      setDriveMotors(0.0, 0.0);
-    } else if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_THROW_TIME_S) {
-      setArmMotor(0.0);
-      setIntakeMotor(autonomousIntakePower, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
-      setDriveMotors(0.0, 0.0);
-    } else if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_THROW_TIME_S + Constants.ArmConstants.ARM_EXTEND_TIME_S) {
-      setArmMotor(-Constants.ArmConstants.ARM_OUTPUT_POWER);
-      setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
-      setDriveMotors(0.0, 0.0);
-    } else if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_THROW_TIME_S + Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_DRIVE_TIME) {
-      setArmMotor(0.0);
-      setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
-      setDriveMotors(Constants.AutoConstants.AUTO_DRIVE_SPEED, 0.0);
-    } else {
-      setArmMotor(0.0);
-      setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
-      setDriveMotors(0.0, 0.0);
+    //if the ConeAuto is chosen in the Chooser, the code in this if statement will run to place a cone and drive back
+    if (m_autoSelected == Constants.AutoConstants.kConeAuto) {
+      //arm reaches out slowly
+      if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S) {
+        setArmMotor(Constants.ArmConstants.AUTO_ARM_OUTPUT_POWER);
+        setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
+        setDriveMotors(0.0, 0.0);
+      } 
+      //throw the cone
+      else if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_THROW_TIME_S) {
+        setArmMotor(Constants.ArmConstants.ARM_HOLDSTALL_POWER);
+        //Set autonomousIntakePower with the correct sign to eject a cone
+        setIntakeMotor(autonomousIntakePower, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
+        setDriveMotors(0.0, 0.0);
+      } 
+      //pull the arm in
+      else if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_THROW_TIME_S + Constants.ArmConstants.ARM_EXTEND_TIME_S) {
+        setArmMotor(-Constants.ArmConstants.ARM_OUTPUT_POWER);
+        setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
+        setDriveMotors(0.0, 0.0);
+      } 
+      //drive back a little bit to get bumpers clear for a slight turn
+      else if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_THROW_TIME_S + Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_DRIVE_TIME1) {
+        setArmMotor(0.0);
+        setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
+        setDriveMotors(Constants.AutoConstants.AUTO_DRIVE_SPEED, 0.0);
+      } 
+      //make a slight turn to compensate for drivetrain pull
+      else if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_THROW_TIME_S + Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_DRIVE_TIME1) {
+        setArmMotor(0.0);
+        setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
+        setDriveMotors(Constants.AutoConstants.AUTO_DRIVE_SPEED, 0.0);
+      } 
+      //drive backwards
+      else if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_THROW_TIME_S + Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_DRIVE_TIME1) {
+        setArmMotor(0.0);
+        setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
+        setDriveMotors(Constants.AutoConstants.AUTO_DRIVE_SPEED, 0.0);
+      } 
+      //turn about 180 degrees to be ready to get more game pieces in TELE
+      else {
+        setArmMotor(0.0);
+        setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
+        setDriveMotors(0.0, 0.0);
+      }
     }
+   
   }
 
   
