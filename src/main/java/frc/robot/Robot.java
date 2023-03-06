@@ -4,9 +4,7 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -61,7 +59,8 @@ public class Robot extends TimedRobot {
    * mode (switch set to X on the bottom) or a different controller
    * that you feel is more comfortable.
    */
-  Joystick j = new Joystick(0);
+  Joystick driver = new Joystick(0);
+  Joystick operator = new Joystick(1);
 
   /**
    * This method is run once when the robot is first started up.
@@ -82,7 +81,8 @@ public class Robot extends TimedRobot {
      * if it is going the wrong way. Repeat for the other 3 motors.
      */
     driveLeftSparkFront.setInverted(false);
-    driveLeftSparkBack.setInverted(true);
+    driveLeftSparkBack.setInverted(false);
+    
     driveRightSparkFront.setInverted(true);
     driveRightSparkBack.setInverted(true);
     
@@ -115,8 +115,11 @@ public class Robot extends TimedRobot {
      */
     double left = (forward - turn) / (1 + Math.abs(turn));
     double right = (forward + turn) / (1 + Math.abs(turn));
-    //double left = (forward - turn) / (1 + Math.abs(turn));
-    //double right = (forward + turn) / (1 + Math.abs(turn));
+
+    if (!(forward < Constants.DriveConstants.LOWER_FORWARD_THRESHOLD && Math.abs(turn) > Constants.DriveConstants.LOWER_TURN_THRESHOLD)){
+      left *= Math.abs(left);
+      right *= Math.abs(right);
+     }
 
     SmartDashboard.putNumber("drive left power (%)", left);
     SmartDashboard.putNumber("drive right power (%)", right);
@@ -140,7 +143,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("arm motor current (amps)", arm.getOutputCurrent());
     SmartDashboard.putNumber("arm motor temperature (C)", arm.getMotorTemperature());
   }
-
   /**
    * Set the arm output power.
    * 
@@ -245,8 +247,8 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     double armPower;
     
-    double lowerArm = j.getRawAxis(Constants.JoystickConstants.JOYSTICK_AXIS_ID_LOWER_ARM);
-    double raiseArm = j.getRawAxis(Constants.JoystickConstants.JOYSTICK_AXIS_ID_RAISE_ARM);
+    double lowerArm = operator.getRawAxis(Constants.JoystickConstants.JOYSTICK_AXIS_ID_LOWER_ARM);
+    double raiseArm = operator.getRawAxis(Constants.JoystickConstants.JOYSTICK_AXIS_ID_RAISE_ARM);
     if (Math.abs(lowerArm) > Constants.ArmConstants.ARM_DEADZONE_THRESHOLD) {
       // lower the arm
       // lower arm value needs to be negative with current config
@@ -262,12 +264,12 @@ public class Robot extends TimedRobot {
   
     double intakePower;
     int intakeAmps;
-    if (j.getRawButton(Constants.JoystickConstants.JOYSTICK_BUTTON_ID_CUBE_IN_OR_CONE_OUT)) {
+    if (operator.getRawButton(Constants.JoystickConstants.JOYSTICK_BUTTON_ID_CUBE_IN_OR_CONE_OUT)) {
       // cube in or cone out
       intakePower = Constants.IntakeConstants.INTAKE_OUTPUT_POWER;
       intakeAmps = Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A;
       lastGamePiece = Constants.GamePieceConstants.CUBE;
-    } else if (j.getRawButton(Constants.JoystickConstants.JOYSTICK_BUTTON_ID_CONE_IN_OR_CUBE_OUT)) {
+    } else if (operator.getRawButton(Constants.JoystickConstants.JOYSTICK_BUTTON_ID_CONE_IN_OR_CUBE_OUT)) {
       // cone in or cube out
       intakePower = -Constants.IntakeConstants.INTAKE_OUTPUT_POWER;
       intakeAmps = Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A;
@@ -280,6 +282,7 @@ public class Robot extends TimedRobot {
       intakeAmps = Constants.IntakeConstants.INTAKE_HOLD_CURRENT_LIMIT_A;
     } else {
       intakePower = 0.0;
+      
       intakeAmps = 0;
     }
     setIntakeMotor(intakePower, intakeAmps);
@@ -288,7 +291,7 @@ public class Robot extends TimedRobot {
      * Negative signs here because the values from the analog sticks are backwards
      * from what we want. Forward returns a negative when we want it positive.
      */
-    setDriveMotors(j.getRawAxis(Constants.JoystickConstants.JOYSTICK_AXIS_FORWARD), 
-    j.getRawAxis(Constants.JoystickConstants.JOYSTICK_AXIS_TURN));
+    setDriveMotors(driver.getRawAxis(Constants.JoystickConstants.JOYSTICK_AXIS_FORWARD), 
+    driver.getRawAxis(Constants.JoystickConstants.JOYSTICK_AXIS_TURN));
   }
 }

@@ -14,6 +14,9 @@ public final class Constants {
         public static final int CAN_ID_DRIVE_LEFT_BACK = 14;
         public static final int CAN_ID_DRIVE_RIGHT_FRONT  = 11;
         public static final int CAN_ID_DRIVE_RIGHT_BACK  = 12;
+
+        public static final double LOWER_FORWARD_THRESHOLD = 0.1;
+        public static final double LOWER_TURN_THRESHOLD = 0.15;
     }
 
     public static final class ArmConstants {
@@ -31,7 +34,7 @@ public final class Constants {
            * Time to extend or retract arm in auto
            */
         public static final double ARM_EXTEND_TIME_S = 2.0;
-        public static final double ARM_DEADZONE_THRESHOLD = 0.1;
+        public static final double ARM_DEADZONE_THRESHOLD = 0.04;
         public static final double ARM_RAISE_MAX_OUTPUT = 1.0;
         public static final double ARM_LOWER_MAX_OUTPUT = 0.30;
     }
