@@ -76,14 +76,16 @@ public final class Constants {
         /**
           * Time to drive back in auto
           */
-        public static final double AUTO_DRIVE_TIME1 = 0.5;
-        public static final double AUTO_DRIVE_TIME2 = 0.5;
-        public static final double AUTO_DRIVE_TIME3 = 6.0;
+        public static final double AUTO_DRIVE_TIME1 = 1.0;
+        public static final double AUTO_DRIVE_TIME2 = 0.48;
+        public static final double AUTO_DRIVE_TIME3 = 5.5;
+        public static final double AUTO_DRIVE_TIME4 = 1.72;
 
         /**
           * Speed to drive backwards in auto
           */
-        public static final double AUTO_DRIVE_SPEED = -0.25;
+        public static final double AUTO_DRIVE_SPEED = 0.5;
+        public static final double AUTO_TURN_SPEED = -0.33;
     }
 
     public static final class JoystickConstants {

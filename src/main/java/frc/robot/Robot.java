@@ -15,7 +15,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.Constants;
-
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.TimedRobot;
 public class Robot extends TimedRobot {
   /*
    * Autonomous selection options.
@@ -72,6 +73,7 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("cone and mobility", Constants.AutoConstants.kConeAuto);
     m_chooser.addOption("cube and mobility", Constants.AutoConstants.kCubeAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+   CameraServer.startAutomaticCapture();
 
     /*
      * You will need to change some of these from false to true.
@@ -217,9 +219,12 @@ public class Robot extends TimedRobot {
       //arm reaches out slowly
       if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S) {
         setArmMotor(Constants.ArmConstants.AUTO_ARM_OUTPUT_POWER);
-        setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
+        if(timeElapsed < 0.2){
+          setIntakeMotor(-10.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
+        }
+        //setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
         setDriveMotors(0.0, 0.0);
-      } 
+      }  
       //throw the cone
       else if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_THROW_TIME_S) {
         setArmMotor(Constants.ArmConstants.ARM_HOLDSTALL_POWER);
@@ -240,18 +245,24 @@ public class Robot extends TimedRobot {
         setDriveMotors(Constants.AutoConstants.AUTO_DRIVE_SPEED, 0.0);
       } 
       //make a slight turn to compensate for drivetrain pull
-      else if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_THROW_TIME_S + Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_DRIVE_TIME1) {
+      else if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_THROW_TIME_S + Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_DRIVE_TIME1+Constants.AutoConstants.AUTO_DRIVE_TIME2) {
         setArmMotor(0.0);
         setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
-        setDriveMotors(Constants.AutoConstants.AUTO_DRIVE_SPEED, 0.0);
+        setDriveMotors( 0.0 ,Constants.AutoConstants.AUTO_TURN_SPEED);
       } 
       //drive backwards
-      else if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_THROW_TIME_S + Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_DRIVE_TIME1) {
+      else if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_THROW_TIME_S + Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_DRIVE_TIME1+Constants.AutoConstants.AUTO_DRIVE_TIME2+Constants.AutoConstants.AUTO_DRIVE_TIME3) {
         setArmMotor(0.0);
         setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
         setDriveMotors(Constants.AutoConstants.AUTO_DRIVE_SPEED, 0.0);
       } 
       //turn about 180 degrees to be ready to get more game pieces in TELE
+      else if (timeElapsed < Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_THROW_TIME_S + Constants.ArmConstants.ARM_EXTEND_TIME_S + Constants.AutoConstants.AUTO_DRIVE_TIME1+Constants.AutoConstants.AUTO_DRIVE_TIME2+Constants.AutoConstants.AUTO_DRIVE_TIME3+Constants.AutoConstants.AUTO_DRIVE_TIME4) {
+        setArmMotor(0.0);
+        setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
+        setDriveMotors( 0.0 ,Constants.AutoConstants.AUTO_TURN_SPEED*2);
+      } 
+      //Stop robot
       else {
         setArmMotor(0.0);
         setIntakeMotor(0.0, Constants.IntakeConstants.INTAKE_CURRENT_LIMIT_A);
