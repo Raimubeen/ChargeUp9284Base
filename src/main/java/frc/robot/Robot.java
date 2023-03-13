@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.Constants;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.TimedRobot;
 public class Robot extends TimedRobot {
   /*
    * Autonomous selection options.
@@ -330,7 +329,7 @@ public class Robot extends TimedRobot {
      * Negative signs here because the values from the analog sticks are backwards
      * from what we want. Forward returns a negative when we want it positive.
      */
-    setDriveMotors(driver.getRawAxis(Constants.JoystickConstants.JOYSTICK_AXIS_FORWARD), 
+    setDriveMotors(driver.getRawAxis(Constants.JoystickConstants.JOYSTICK_AXIS_FORWARD)*(-1), 
     driver.getRawAxis(Constants.JoystickConstants.JOYSTICK_AXIS_TURN));
   }
 }
